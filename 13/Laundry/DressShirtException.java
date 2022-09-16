@@ -1,0 +1,3 @@
+class DressShirtException extends ShirtException {
+  
+}
