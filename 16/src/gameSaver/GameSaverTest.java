@@ -13,21 +13,19 @@ public class GameSaverTest {
 
 	public static void main(String[] args) {
 		GameSaverTest gst = new GameSaverTest();
-		
-		GameCharacter one = new GameCharacter(50, "Elf", new String[] {"bow", "sword", "dust"});
-		GameCharacter two = new GameCharacter(200, "Troll", new String[] {"bare hands", "bix ax"});
-		GameCharacter three = new GameCharacter(120, "Magician", new String[] {"spells", "invisibility"});
-		
+		gst.go();
+	}
+	
+	private void go() {
 		List<GameCharacter> characters = new ArrayList<>();
-		characters.add(one);
-		characters.add(two);
-		characters.add(three);
+		characters.add(new GameCharacter(50, "Elf", new String[] {"bow", "sword", "dust"}, new Trait[] {new Trait("curious, excited")}));
+		characters.add(new GameCharacter(200, "Troll", new String[] {"bare hands", "bix ax"}, new Trait[] {new Trait("aggressive, angry")}));
+		characters.add(new GameCharacter(120, "Magician", new String[] {"spells", "invisibility"}, new Trait[] {new Trait("cunning, clever")}));
 		
 		// imagine code that does things with the characters that changes their state values
 		
-		gst.serialize(characters, "Game.ser");
-		gst.deserialize("Game.ser");
-		
+		serialize(characters, "Game.ser");
+		deserialize("Game.ser");
 	}
 	
 	private void serialize(List<GameCharacter> characters, String fileName) {
@@ -53,9 +51,9 @@ public class GameSaverTest {
 			GameCharacter threeRestore = (GameCharacter) is.readObject();
 			is.close();
 			
-			System.out.println("One's type: " + oneRestore.getType());
-			System.out.println("Two's type: " + twoRestore.getType());
-			System.out.println("Three's type: " + threeRestore.getType());
+			System.out.println(oneRestore.getType() + "'s traits: " + oneRestore.getTraits());
+			System.out.println(twoRestore.getType() + "'s traits: " + twoRestore.getTraits());
+			System.out.println(threeRestore.getType() + "'s traits: " + threeRestore.getTraits());
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
