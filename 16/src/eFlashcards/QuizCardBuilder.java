@@ -28,7 +28,6 @@ public class QuizCardBuilder {
 	private JTextArea question;
 	private JTextArea answer;
 	private JFrame frame;
-	private BufferedWriter writer;
 	
 	public static void main(String[] args) {
 		new QuizCardBuilder().go();
@@ -161,16 +160,8 @@ public class QuizCardBuilder {
 		// iterate through the list of cards and write
 		// each one out to a text file in a parseable way
 		// (in other words, with clear separations between parts)
-		try {
-			
-			this.writer = new BufferedWriter(new FileWriter(file));
-			for (QuizCard card : this.cardList) {
-				// why are we writing twice?
-				this.writer.write(card.getQuestion() + "/"); //$NON-NLS-1$
-				this.writer.write(card.getAnswer() + "\n"); //$NON-NLS-1$
-			}
-			this.writer.close();
-			
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+			for (QuizCard card : this.cardList) writer.write(card.getQuestion() + "/" + card.getAnswer() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException e) {
 			System.out.println("Couldn't write the cardList out:"); //$NON-NLS-1$
 			e.printStackTrace();

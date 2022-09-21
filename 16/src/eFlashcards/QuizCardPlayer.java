@@ -134,6 +134,7 @@ public class QuizCardPlayer {
 			String line;
 			while ((line = this.reader.readLine()) != null) makeCard(line);
 			this.reader.close();
+			this.nextButton.setEnabled(true);
 			
 		} catch (IOException e) {
 			System.out.println("Couldn't write the cardList out: " + e.getMessage()); //$NON-NLS-1$

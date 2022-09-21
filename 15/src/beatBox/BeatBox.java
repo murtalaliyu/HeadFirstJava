@@ -1,7 +1,18 @@
 package beatBox;
 
+/**
+ * TODO: this.tempo is buggy (serialization.read...)
+ */
+
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -16,6 +27,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -37,6 +49,8 @@ public class BeatBox {
 	private Sequencer sequencer;
 	private Sequence sequence;
 	private Track track;
+	private JFrame frame;
+	private float tempo;
 	
 	private int[] instruments = {35, 42, 46, 38, 49, 39, 50, 60, 70, 72, 64, 56, 58, 47, 67, 63};
 	private String[] instrumentNames = {"Bass Drum", "Closed Hi-Hat", "Open Hi-Hat", "Acoustic Snare", "Crash Cymbal",
@@ -49,7 +63,7 @@ public class BeatBox {
 	
 	public void buildGUI() {
 		// create frame
-		JFrame frame = new JFrame("Cyber BeatBox");
+		frame = new JFrame("Cyber BeatBox");
 		frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		// create border layout panel
@@ -80,6 +94,14 @@ public class BeatBox {
 		JButton refresh = new JButton("Refresh");
 		refresh.addActionListener(e -> refreshGrid());
 		buttonBox.add(refresh);
+		
+		JButton serializeIt = new JButton("serializeIt");
+		serializeIt.addActionListener(e -> save());
+		buttonBox.add(serializeIt);
+		
+		JButton restore = new JButton("restore");
+		restore.addActionListener(e -> open());
+		buttonBox.add(restore);
 		
 		// generate instrument names box layout
 		Box nameBox = new Box(Y_AXIS);
@@ -206,7 +228,8 @@ public class BeatBox {
 	 */
 	private void changeTempo(float tempoMultiplier) {
 		float tempoFactor = sequencer.getTempoFactor();
-		sequencer.setTempoFactor(tempoFactor * tempoMultiplier);
+		this.tempo = tempoFactor * tempoMultiplier;
+		sequencer.setTempoFactor(this.tempo);
 	}
 	
 	/**
@@ -238,6 +261,76 @@ public class BeatBox {
 			e.printStackTrace();
 		}
 		return event;
+	}
+	
+	/**
+	 * Call when user clicks the 'serializeIt' button.
+	 * will open the file chooser and allow the user to name
+	 * the resulting file.
+	 */
+	private void save() {
+		JFileChooser fileSave = new JFileChooser();
+		fileSave.showSaveDialog(this.frame);
+		writeFile(fileSave.getSelectedFile());
+	}
+	
+	/**
+	 * We can call this from a lambda expression when we add an
+	 * ActionListener to the serializeIt button, or create an
+	 * ActionListener inner class that calls this.
+	 */
+	private void writeFile(File file) {
+		boolean[] checkboxState = new boolean[256];
+		for (int i = 0; i < 256; i++) {
+			JCheckBox check = this.checkboxList.get(i);
+			if (check.isSelected()) checkboxState[i] = true;
+		}
+		
+		try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(file))) {
+			os.writeObject(checkboxState);
+			os.writeObject(this.tempo);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Bring up a file dialog box
+	 * let the user navigate to and choose a beat pattern file to open
+	 */
+	private void open() {
+		JFileChooser fileOpen = new JFileChooser();
+		fileOpen.showOpenDialog(this.frame);
+		readFile(fileOpen.getSelectedFile());
+	}
+	
+	/**
+	 * This is pretty much the save, writeFile(), in reverse...read the boolean
+	 * array and use it to restore the state of the GUI checkboxes and tempo.
+	 * It all happens when the user hits the "restore" button.
+	 */
+	private void readFile(File file) {
+		boolean[] checkboxState = null;
+		try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(file))) {
+			checkboxState = (boolean[]) is.readObject();
+			this.tempo = (float) is.readObject();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		for (int i = 0; i < 256; i++) {
+			JCheckBox check = this.checkboxList.get(i);
+			check.setSelected(checkboxState[i]);
+		}
+		sequencer.setTempoFactor(this.tempo);
+		System.out.println("loaded: " + file.getName() + ", tempo: " + this.tempo);
+		
+		sequencer.stop();
+//		buildTrackAndStart();
 	}
 
 }
