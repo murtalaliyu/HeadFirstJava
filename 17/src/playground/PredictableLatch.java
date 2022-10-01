@@ -6,30 +6,28 @@ import java.util.concurrent.Executors;
 
 public class PredictableLatch {
 	
-	private static int i = 0;
-	
 	public static void main(String[] args) { 
-		go();
+		new PredictableLatch().go();
 	}
 	
-	private static void go() {
+	private void go() {
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		CountDownLatch latch = new CountDownLatch(1);
 		
 		executor.execute(() -> waitForLatchThenPrint(latch));
 		
-		System.out.println("back in main at " + i);
+		System.out.println("back in main");
 		latch.countDown();
 		
 		executor.shutdown();
 	}
 	
-	private static void waitForLatchThenPrint(CountDownLatch latch) {
+	private void waitForLatchThenPrint(CountDownLatch latch) {
 		await(latch);
-		System.out.println("top o' the stack at " + i);
+		System.out.println("top o' the stack");
 	}
 	
-	private static void await(CountDownLatch latch) {
+	private void await(CountDownLatch latch) {
 		try {
 			latch.await();
 		} catch (InterruptedException e) {
