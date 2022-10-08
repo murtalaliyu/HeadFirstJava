@@ -2,21 +2,19 @@ package ryanAndMonicaProblem;
 
 public class RyanAndMonicaJob implements Runnable {
 	
-	private final BankAccount account;
+//	private final BankAccount account;
+	private final BankAccountAtomic account;
 	private final String name;
 	private final int amountToSpend;
 	
-	RyanAndMonicaJob(String name, BankAccount account, int amountToSpend) {
+	RyanAndMonicaJob(String name, BankAccountAtomic account, int amountToSpend) {
 		this.account = account;
 		this.name = name;
 		this.amountToSpend = amountToSpend;
 	}
 
 	@Override
-	public void run() {
-		// Auto-generated method stub
-		goShopping(amountToSpend);
-	}
+	public void run() { goShopping(amountToSpend); }
 	
 	private void goShopping(int amount) {
 		/**
@@ -31,15 +29,15 @@ public class RyanAndMonicaJob implements Runnable {
 		 * even if that thread is taken out of the "running" state by the thread scheduler or another thread is trying
 		 * to make changes at exactly the same time.
 		 */
-		synchronized(account) {
-			if (account.getBalance() >= amount) {
-				System.out.println(name + " is about to spend $" + amount);
-				account.spend(amount);
-				System.out.println(name + " finishes spending. Account balance is now $" + account.getBalance());
-			} else {
-				System.out.println("Sorry, $" + account.getBalance() + " not enough money for " + name + " to spend $" + amount);
-			}
-		}
+//		synchronized(account) {
+//			if (account.getBalance() >= amount) {
+//				System.out.println(name + " is about to spend $" + amount);
+				account.spend(name, amount);
+//				System.out.println(name + " finishes spending. Account balance is now $" + account.getBalance());
+//			} else {
+//				System.out.println("Sorry, $" + account.getBalance() + " not enough money for " + name + " to spend $" + amount);
+//			}
+//		}
 	}
 
 }

@@ -14,11 +14,12 @@ public class RyanAndMonicaTest {
 	}
 	
 	private void go () {
-		BankAccount account = new BankAccount(100);
+//		BankAccount account = new BankAccount(100);
+		BankAccountAtomic account = new BankAccountAtomic();
 		RyanAndMonicaJob ryan = new RyanAndMonicaJob("Ryan", account, 50);
 		RyanAndMonicaJob monica = new RyanAndMonicaJob("Monica", account, 100);
-		
 		System.out.println("Starting account balance: $" + account.getBalance());
+		
 		ExecutorService executor = Executors.newFixedThreadPool(2);
 		executor.execute(ryan);
 		executor.execute(monica);
@@ -28,7 +29,7 @@ public class RyanAndMonicaTest {
 			Thread.currentThread();
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			// Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("Ending account balance: $" + account.getBalance());
