@@ -74,7 +74,8 @@ public class BeatBox {
 		// create box layout
 		Box buttonBox = new Box(Y_AXIS);
 		
-		// create start, stop, up, and down tempo buttons, and add them to button box layout
+		// create start, stop, up, and down tempo buttons, 
+		// and add them to button box layout
 		JButton start = new JButton("Start");
 		start.addActionListener(e -> buildTrackAndStart());
 		buttonBox.add(start);
