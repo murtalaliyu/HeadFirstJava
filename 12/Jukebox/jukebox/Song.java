@@ -1,3 +1,5 @@
+package jukebox;
+
 public class Song {
   private final String title;
   private final String artist;

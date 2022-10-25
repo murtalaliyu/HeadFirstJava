@@ -1,7 +1,9 @@
+package jukebox;
+
 import java.util.List;
 
-class Songs {
-  public List<Song> getSongs() {
+public class Songs {
+  public static List<Song> getSongs() {
     return List.of(
       new Song("$10", "Hitchhiker", "Electronic", 2016, 103),
       new Song("Havana", "Camila Cabello", "R&B", 2017, 324),

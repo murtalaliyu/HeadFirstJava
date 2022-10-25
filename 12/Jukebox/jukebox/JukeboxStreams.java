@@ -1,3 +1,5 @@
+package jukebox;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -5,11 +7,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class JukeboxStreams {
+class JukeboxStreams {
 
   public static void main(String[] args) {
     JukeboxStreams m = new JukeboxStreams();
-    List<Song> songs = new Songs().getSongs();
+    List<Song> songs = Songs.getSongs();
 
     List<Song> songsOfRockGenre = m.getSongsOfRockGenre(songs);
     System.out.println("\nSongs of the 'Rock' genre (" + songsOfRockGenre.size() + "):\n" + songsOfRockGenre);
